@@ -11,16 +11,18 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Value("${management.context-path}")
-    private String managementPath;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers(managementPath+"/health").permitAll()
-                .antMatchers(managementPath+"/**").authenticated()
+                .antMatchers("/custom/login.html","/login","/logout").permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .httpBasic()
+                .formLogin()
+                .loginPage("/custom/login.html")
+                .loginProcessingUrl("/login")
+                .successForwardUrl("/success")
                 .and().csrf().disable();
     }
 }
